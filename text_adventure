@@ -1,0 +1,137 @@
+#Text adventure assignment Harrison Johs
+
+from asyncio import base_events
+import random
+
+#Creates backpack and fucntions involving it
+backpack = []
+
+def check_backpack(command):
+    if command == 'check backpack':
+        if not backpack:
+            print('There is currently nothing in your backpack')
+        else:
+            print(','.join(backpack))
+
+def pick_up(item):
+    backpack.append(item)
+    print(f'{item} was added to your backpack')
+
+#Create health system
+health = 100
+
+def check_health(command):
+    if command == 'check health':
+        print (f'Health = {health}/100')
+        
+
+def damage(dmg,character):
+    global health
+    global bad_guy_health
+    if character == 'you':
+        health = health - dmg
+    elif character == 'bad_guy':
+        bad_guy_health = bad_guy_health - dmg
+    return health and bad_guy_health
+
+#Create bad guy and attack system
+bad_guy_health = 100
+
+def shoot(character):
+    chance = random.randint(1,2)
+    if chance == 1:
+        print('Shot landed in the head!')
+        damage(100,character)
+    else:
+        print('Shot missed!')
+
+def stab(character):
+    dmg = random.randint(20,70)
+    damage(dmg,character)
+
+def punch(character):
+    dmg = random.randint(1,20)
+    damage(dmg,character)
+
+
+#Creat function for bedroom
+been_in_kitchen = False
+def bedroom():
+    global backpack
+    global been_in_kitchen
+    if been_in_kitchen is False:
+        print('You wake up in your bed to a strange noise outside, you can look out the window, go to your kitchen, or go to your gun safe under the bed.(window/kitchen/safe)')
+    elif been_in_kitchen is True:
+        print('You return to your bedroom and can either go back to the kitchen or go to your safe(kitchen/safe)')
+    while True:
+        command = input()
+        check_backpack(command)
+        check_health(command)
+        if command == 'window':
+            print('You look out your window and see a mysterious figure standing outside your door. You may go to the kitchen or go to your gun safe.(kitchen/safe)')
+        elif command == 'safe':
+            if 'Key' in backpack:
+                print('You open the safe using the key and see your gun still inside. You take it and go back to the kitchen.')
+                pick_up('Gun')
+                kitchen()
+            elif 'Key' not in backpack:
+                print('You find that the safe is locked and remember that the key is somewhere in the kitchen')
+                print('You now go to the kitchen.')
+                kitchen()
+            else:
+                print('Invalid command')
+        elif command == 'kitchen':
+            been_in_kitchen = True
+            kitchen()
+        elif command == 'check backpack' or 'check health':
+            continue
+        else:
+            print('Invalid Command')
+
+#Creat function for kitchen
+door_open = False
+
+def kitchen():
+    if door_open == False:
+        print('You are now and the kitchen and hear a knock coming from the door. You may go open the door, choose to explore the kitchen first, or return to your bedroom.(door/explore/bedroom)')
+        while True:
+            command = input()
+            check_health(command)
+            check_backpack(command)
+            if command == 'explore':
+                print('You look in the kitchen and see a couple cabinents. You may open the lower or upper cabinent, go to the door, or go back to your bedroom(lower/upper/door/bedroom)')
+                command = input()
+                if command == 'upper':
+                    print('You open the upper cabinent and find the key inside. You pick it up')
+                    pick_up('Key')
+                elif command == 'lower':
+                    print('You open the lower cabinent and find a knife inside. You pick it up')
+                    pick_up('Knife')
+                elif command == 'bedroom':
+                    bedroom()
+                elif command == 'door':
+                    fight()
+                else:
+                    print('Invalid command')
+            elif command == 'door':
+                fight()
+            elif command == 'bedroom':
+                bedroom()
+            elif command == 'check backpack' or 'check health':
+                continue
+            else:
+                print('Invalid Command')
+                
+
+#Create function for fight
+def fight():
+    print('ADD THIS SHIT HARRISON')
+
+
+
+#Give beginning instructions to game
+print('Welcome to Harrison\'s text adventure, in this game the goal is simply to survive. At any time throughout the adventure you may enter "check backpack" to see the contents of your backpack, you may also enter "check health" at any time to see your current health. Your options will be presented to you in parantheses after each statement.')
+
+
+#Start adventure in room
+bedroom()
